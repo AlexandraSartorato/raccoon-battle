@@ -63,7 +63,7 @@
           progressBox.destroy();
         });
 
-        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+        this.load.setBaseURL(window.location.href + '/img/');
 
         this.load.image('raccoon1', 'run/run0001.png');
         this.load.image('raccoon2', 'run/run0003.png');
@@ -449,7 +449,7 @@
 
       preload()
       {
-        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+        this.load.setBaseURL(window.location.href +'/img/');
 
         this.load.image('deadCrow','crowdead.png' );
         this.load.image('background','gradient9.png' );
@@ -500,7 +500,7 @@
 
       preload()
       {
-        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+        this.load.setBaseURL(window.location.href +'/img/');
 
         this.load.image('racoon','idle/0001.png' );
         this.load.image('start','start.png');
