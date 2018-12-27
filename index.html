@@ -1,0 +1,568 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="css/main.css">
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.0.0/dist/phaser.min.js"></script>
+</head>
+
+<body>
+  <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+
+
+    class SceneLevel1 extends Phaser.Scene {
+      constructor()
+      {
+        super({key: 'SceneLevel1', active: true});
+
+      }
+      preload()
+      {
+        var progressBar = this.add.graphics();
+        var progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(270, 300, 320, 50);
+
+        var width = this.cameras.main.width;
+        var height = this.cameras.main.height;
+        var loadingText = this.make.text({
+          x: width / 2,
+          y: height / 2 - 50,
+          text: 'Raccoon is surviving...',
+          style: {
+            font: '20px monospace',
+            fill: '#ffffff'
+          }
+        });
+        loadingText.setOrigin(1, 1);
+
+
+        this.load.on('progress', function (value) {
+          progressBar.clear();
+          progressBar.fillStyle(0xffffff, 1);
+          progressBar.fillRect(280, 310, 300 * value, 30);
+        });
+
+        this.load.on('complete', function () {
+          progressBar.destroy();
+          progressBox.destroy();
+        });
+
+        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+
+        this.load.image('raccoon1', 'run/run0001.png');
+        this.load.image('raccoon2', 'run/run0003.png');
+        this.load.image('raccoon3', 'run/run0005.png');
+        this.load.image('raccoon4', 'run/run0007.png');
+
+        this.load.image('raccoon1_idle', 'idle/0001.png');
+        this.load.image('raccoon2_idle', 'idle/0003.png');
+        this.load.image('raccoon3_idle', 'idle/0005.png');
+        this.load.image('raccoon4_idle', 'idle/0007.png');
+        this.load.image('raccoon5_idle', 'idle/0009.png');
+        this.load.image('raccoon6_idle', 'idle/0011.png');
+        this.load.image('raccoon7_idle', 'idle/0013.png');
+        this.load.image('raccoon8_idle', 'idle/0015.png');
+        this.load.image('raccoon9_idle', 'idle/0017.png');
+        this.load.image('raccoon10_idle', 'idle/0019.png');
+        this.load.image('raccoon11_idle', 'idle/0021.png');
+
+
+
+        this.load.image('raccoon1_slide', 'slide/slide0001.png');
+        this.load.image('raccoon2_slide', 'slide/slide0003.png');
+        this.load.image('raccoon3_slide', 'slide/slide0005.png');
+        this.load.image('raccoon4_slide', 'slide/slide0007.png');
+        this.load.image('raccoon5_slide', 'slide/slide0009.png');
+        this.load.image('raccoon6_slide', 'slide/slide0011.png');
+        this.load.image('raccoon7_slide', 'slide/slide0013.png');
+        this.load.image('raccoon8_slide', 'slide/slide0017.png');
+        this.load.image('raccoon9_slide', 'slide/slide0019.png');
+        this.load.image('raccoon10_slide', 'slide/slide0021.png');
+        this.load.image('raccoon11_slide', 'slide/slide0023.png');
+
+        this.load.image('raccoon1_jump', 'jump/jump0001.png');
+        this.load.image('raccoon2_jump', 'jump/jump0003.png');
+        this.load.image('raccoon3_jump', 'jump/jump0005.png');
+        this.load.image('raccoon4_jump', 'jump/jump0007.png');
+        this.load.image('raccoon5_jump', 'jump/jump0009.png');
+        this.load.image('raccoon6_jump', 'jump/jump0011.png');
+        this.load.image('raccoon7_jump', 'jump/jump0013.png');
+        this.load.image('raccoon8_jump', 'jump/jump0015.png');
+        this.load.image('raccoon9_jump', 'jump/jump0017.png');
+        this.load.image('raccoon10_jump','jump/jump0019.png');
+        this.load.image('raccoon11_jump','jump/jump0021.png');
+
+
+        this.load.image('grass', 'backgroundLevel1.png');
+        this.load.image('ground', 'platform.png');
+        this.load.image('life', 'hearts.png');
+        this.load.image('lifeEarn', 'life.png');
+        this.load.atlas('gems', 'diamond.png', 'diamond.json');
+
+        //ennemies
+        this.load.image('crow', 'ennemy.png');
+
+        //sound
+        this.load.audio('sfx', 'collectGem.mp3');
+        this.load.audio('theme', 'theme.mp3');
+        this.load.audio('crowSound', 'crowSound.mp3');
+        this.load.audio('levelSound', 'levelSound.mp3');
+        this.load.audio('gainLifeSound', 'gainLifeSound.mp3');
+        this.load.audio('sword', 'sword.mp3');
+
+      }
+
+
+
+      create()
+      {
+        var camera = this.cameras.main;
+        //background
+        this.add.image(400, 300, 'grass');
+        //world
+        platforms = this.physics.add.staticGroup();
+        platforms.create(400, 550, 'ground');
+        platforms.create(600, 350, 'ground');
+        platforms.create(50, 250, 'ground');
+        platforms.create(700, 180, 'ground');
+        platforms.create(880, 500, 'ground');
+
+        //animation gems
+        this.anims.create({
+          key: 'diamond',
+          frames: this.anims.generateFrameNames('gems', {prefix: 'diamond_', end: 15, zeroPad: 4}),
+          repeat: -1
+        });
+
+        gems = this.physics.add.group();
+        gems.enableBody = true;
+
+        for (var i = 0; i < gemNumber; i++) {
+          var gem = gems.create(i * 50, 200, 'gems').play('diamond').setScale(0.5);
+          gem.body.setSize(gem.width, gem.height).setOffset(gem.width - 30, gem.height);
+          gem.setBounce(0.2);
+          gem.collideWorldBounds = true;
+
+          this.physics.add.collider(platforms, gem);
+        }
+
+        //life
+        this.add.image(30, 30, 'life').setScale(2);
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        this.anims.create({
+          key: 'run',
+          frames: [
+            {key: 'raccoon1'},
+            {key: 'raccoon2'},
+            {key: 'raccoon3'},
+            {key: 'raccoon4', duration: 50}
+          ],
+          frameRate: 8,
+          repeat: -1
+        });
+
+
+        this.anims.create({
+          key: 'idle',
+          frames: [
+            {key: 'raccoon1_idle'},
+            {key: 'raccoon2_idle'},
+            {key: 'raccoon3_idle'},
+            {key: 'raccoon4_idle'},
+            {key: 'raccoon5_idle'},
+            {key: 'raccoon6_idle'},
+            {key: 'raccoon7_idle'},
+            {key: 'raccoon8_idle'},
+            {key: 'raccoon9_idle'},
+            {key: 'raccoon10_idle'},
+            {key: 'raccoon11_idle', duration: 50}
+          ],
+          frameRate: 8,
+          repeat: -1
+        });
+
+        this.anims.create({
+          key: 'slide',
+          frames: [
+            {key: 'raccoon1_slide'},
+            {key: 'raccoon2_slide'},
+            {key: 'raccoon3_slide'},
+            {key: 'raccoon4_slide'},
+            {key: 'raccoon5_slide'},
+            {key: 'raccoon6_slide'},
+            {key: 'raccoon7_slide'},
+            {key: 'raccoon8_slide'},
+            {key: 'raccoon9_slide'},
+            {key: 'raccoon10_slide'},
+            {key: 'raccoon11_slide', duration: 50}
+          ],
+          frameRate: 8,
+          repeat: -1
+        });
+
+        this.anims.create({
+          key: 'jump',
+          frames: [
+            {key: 'raccoon1_jump'},
+            {key: 'raccoon2_jump'},
+            {key: 'raccoon3_jump'},
+            {key: 'raccoon4_jump'},
+            {key: 'raccoon5_jump'},
+            {key: 'raccoon6_jump'},
+            {key: 'raccoon7_jump'},
+            {key: 'raccoon8_jump'},
+            {key: 'raccoon9_jump'},
+            {key: 'raccoon10_jump'},
+            {key: 'raccoon11_jump', duration: 50}
+          ],
+          frameRate: 8,
+          repeat: -1
+        });
+
+        raccoon = this.physics.add.sprite(400, 400, 'raccoon1_idle').setScale(0.2);
+        raccoon.body.setSize(raccoon.width - 550, raccoon.height - 300).setOffset(raccoon.width + 1100, raccoon.height + 900);
+
+
+
+        ennemies = this.physics.add.group();
+
+        var x = (raccoon.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+        for (var i = 0; i < crowNumber; i++) {
+          var ennemy = ennemies.create(x, 16, 'crow');
+
+          ennemy.setBounce(1);
+          ennemy.setCollideWorldBounds(true);
+          ennemy.setVelocity(Phaser.Math.Between(-200, 200), 20);
+          ennemy.allowGravity = false;
+        }
+
+
+        //physics comme de la gravite
+        raccoon.setBounce(0.2);
+        raccoon.collideWorldBounds = true;
+
+
+        this.physics.add.collider(platforms, raccoon);
+        this.physics.add.collider(ennemies, platforms);
+
+
+
+        var attacked = function (raccoon, ennemy)
+        {
+
+          raccoon.setTint(0xff0000);
+          life = life -1;
+          hearts.setText(life);
+
+          var crowSound = this.sound.add('crowSound');
+          crowSound.play();
+
+
+          if(life === 0){
+            soundTheme.stop();
+            this.scene.add('GameOver', GameOver);
+            this.scene.start('GameOver');
+
+          }
+
+          return false;
+        }
+
+        var text = this.add.text(200, 20, '0', {
+          fontSize: '20px',
+          fill: '#ffffff'
+        });
+
+        var hearts = this.add.text(45, 30, '0', {
+          fontSize: '20px',
+          fill: '#ffffff'
+        });
+
+        hearts.setText(life);
+
+        text.setText("Raccoon Diams':" + score * 20);
+        var soundGem = this.sound.add('sfx');
+        soundTheme = this.sound.add('theme', { loop: true });
+        soundTheme.play();
+
+        var textLevel = this.add.text(500, 20, '0', {
+          fontSize: '20px',
+          fill: '#ffffff'
+        });
+
+        textLevel.setText("Level " + level);
+
+        var collectGems = function (raccoon, gem)
+        {
+          gemNumber--;
+          if (gemNumber === 0) {
+            // add life
+            var lifeEarn = this.physics.add.sprite(900, 150, 'lifeEarn').setScale(0.4);
+            lifeEarn.enableBody = true;
+            lifeEarn.body.setSize(lifeEarn.width-50, lifeEarn.height-50).setOffset(lifeEarn.width, lifeEarn.height);
+            lifeEarn.setBounce(0.2);
+            lifeEarn.collideWorldBounds = true;
+
+            this.physics.add.collider(platforms, lifeEarn);
+            this.physics.add.overlap(raccoon, lifeEarn, collectLife, null, this);
+
+            // win sound
+            var levelSound = this.sound.add('levelSound');
+            levelSound.play();
+
+            // add crow
+            crowNumber++;
+            ennemy = ennemies.create(x, 10, 'crow');
+            //this.scene.setVisible(false, 'SceneLevel1');
+            ennemy.setBounce(1);
+            ennemy.setCollideWorldBounds(true);
+            ennemy.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            ennemy.allowGravity = false;
+
+            level ++;
+            textLevel.setText("Level " + level);
+
+            if(level === 3){
+              bosses = this.physics.add.group();
+              var boss = bosses.create(300, 300, 'crow').setScale(1.5);
+              boss.setTint(0xff0000);
+              boss.setBounce(1);
+              boss.setCollideWorldBounds(true);
+              boss.setVelocity(Phaser.Math.Between(-200, 200), 20);
+              boss.allowGravity = false;
+              this.physics.add.collider(bosses, platforms);
+              this.physics.add.overlap(raccoon, bosses,killBoss, null, this);
+
+            }
+
+            // add gems
+            for( var i = 0; i< 10; i++){
+              gem = gems.create(i* 50, 200, 'gems').play('diamond').setScale(0.5);
+              gem.body.setSize(gem.width, gem.height).setOffset(gem.width-30, gem.height);
+
+              gem.setBounce(0.2);
+              gem.collideWorldBounds = true;
+
+              this.physics.add.collider(platforms, gem);
+            }
+
+
+            gemNumber = 10;
+
+          }
+
+          gem.destroy();
+          soundGem.play();
+          score++;
+          text.setText("Raccoon Diams':" + score * 20);
+          return false;
+        }
+
+        var collectLife = function(raccoon, lifeEarn){
+          var gainLifeSound = this.sound.add('gainLifeSound');
+          gainLifeSound.play();
+          raccoon.clearTint();
+          life ++;
+          hearts.setText(life);
+          lifeEarn.destroy();
+        }
+
+
+        var killBoss = function(raccoon, boss){
+          var sword = this.sound.add('sword');
+          sword.play();
+          score = score + 100;
+          boss.destroy();
+        }
+
+
+        this.physics.add.collider(platforms, gems);
+        this.physics.add.overlap(raccoon, gems, collectGems, null, this);
+        this.physics.add.collider(raccoon, ennemies, attacked, null, this);
+
+      }
+
+
+
+      update()
+      {
+        if(raccoon.y > 700){
+          soundTheme.stop();
+          this.scene.add('GameOver', GameOver);
+          this.scene.start('GameOver');
+        }
+
+        if (cursors.left.isDown) {
+          raccoon.body.setVelocityX(-400);
+          raccoon.anims.play('run', true);
+          raccoon.flipX = true;
+        }
+        else if (cursors.right.isDown) {
+          raccoon.body.setVelocityX(400);
+          raccoon.anims.play('run', true);
+          raccoon.flipX = false;
+        }
+
+        else if (cursors.up.isDown && raccoon.body.touching.down) {
+          raccoon.setVelocityY(-400);
+          raccoon.anims.play('jump', true);
+
+        }
+        else if (cursors.down.isDown && raccoon.body.touching.down) {
+          raccoon.setVelocityY(400);
+          raccoon.anims.play('slide', true);
+        }
+        else {
+          raccoon.body.setVelocityX(0);
+          raccoon.anims.play('idle', true);
+        }
+      }
+    }
+
+
+    class GameOver extends Phaser.Scene{
+
+      constructor()
+      {
+        super({key: 'GameOver', active: true});
+
+      }
+
+      preload()
+      {
+        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+
+        this.load.image('deadCrow','crowdead.png' );
+        this.load.image('background','gradient9.png' );
+        this.scene.stop('SceneLevel1');
+
+        this.load.audio('soundOver', 'gameover.mp3');
+
+
+      }
+
+
+      create()
+      {
+        var soundOver = this.sound.add('soundOver');
+        soundOver.play();
+        this.add.image(400, 300, 'background');
+        var gameOver = this.add.text(400, 50, 'Game Over', { fontSize: '32px', fill: '#88b25e' });
+        this.add.image(400, 300, 'deadCrow');
+
+
+        var titleTryAgain = this.add.text(400, 450,'Try again ? ', { fontSize: '32px', fill: '#88b25e' });
+        var buttonYes = this.add.text(400, 500, 'Yes', { fontSize: '32px', fill: '#88b25e' });
+        var buttonNo = this.add.text(550, 500, 'No', { fontSize: '32px', fill: '#88b25e' });
+        var scoring = this.add.text(700, 200,'Score:' + score*20, { fontSize: '32px', fill: '#88b25e' });
+
+        buttonYes.setInteractive();
+        buttonNo.setInteractive();
+
+        buttonYes.on('pointerdown', () => {
+          location.reload();
+        });
+
+        buttonNo.on('pointerdown', () => {
+          this.scene.switch('MainMenu');
+        });
+
+      }
+
+    }
+
+    class MainMenu extends Phaser.Scene{
+
+      constructor()
+      {
+        super({key: 'MainMenu', active: true});
+
+      }
+
+      preload()
+      {
+        this.load.setBaseURL('http://localhost:8888/HTML5_Gaming/game_v2/src/img/');
+
+        this.load.image('racoon','idle/0001.png' );
+        this.load.image('start','start.png');
+        this.load.image('background', 'backgroundLevel1.png');
+
+      }
+
+
+      create()
+      {
+        this.add.image(200, 200, 'background');
+
+        titleText = this.add.text(400, 300, title, { fontSize: '32px', fill: '#88b25e' });
+
+        this.add.image(100, 200, 'racoon').setScale(1.5);
+
+        var  btnStart = this.add.image(800, 400, 'start').setScale(1);
+        btnStart.setInteractive();
+        btnStart.on('pointerdown', () => {
+          this.scene.add('SceneLevel1', SceneLevel1);
+          this.scene.start('SceneLevel1');
+        }, this);
+
+      }
+
+    }
+
+
+    var config = {
+      type: Phaser.AUTO,
+      width: 1000,
+      height: 600,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          debug: false,
+          gravity: { y: 300 }
+        }
+      },
+      scene: [MainMenu]
+    };
+
+    var game = new Phaser.Game(config);
+    var bosses;
+    var soundTheme;
+    var cursors;
+    var raccoon;
+    var platforms;
+    var ennemies;
+    var gems;
+    var gemNumber = 5;
+    var crowNumber = 1;
+    var life = 3;
+    var title = 'Raccoon Battle';
+    var titleText;
+    var score = 0;
+    var heart;
+    var level = 1;
+    var fx;
+
+
+  </script>
+</body>
+
+</html>
